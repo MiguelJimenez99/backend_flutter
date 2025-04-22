@@ -1,2 +1,5 @@
 # Ignorar dependencias
 node_modules/
+
+# Entornos de desarrollo
+.env
