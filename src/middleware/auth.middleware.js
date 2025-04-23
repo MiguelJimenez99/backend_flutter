@@ -1,19 +1,22 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
-  const token = Headers('Authorization')?.split(' ')[1];
-  
+const verifyToken = (req, res, next) => {
+  const token = req.headers['authorization'];
+
   if (!token) {
-    return res.status(401).json({
-      message: 'Acceso denegado',
-    });
+    return res.status(403).json({
+      message: 'Token invalido',
+    })
   }
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
+    req.userId = verified.id;
     next();
   } catch (error) {
-    res.status(400).json({ message: 'Token inválido' });
+    console.error('Error al verificar token:', error.message);
+    res.status(400).json({ message: 'Token inválido o expirado.' });
   }
 }
+
+module.exports = verifyToken;
